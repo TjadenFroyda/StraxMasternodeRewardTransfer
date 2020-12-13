@@ -1,0 +1,49 @@
+from api import aggregate_spendable_utxos_by_address, send_batched_payload
+from api.payloads import build_crosschain_transfer_payload
+from typing import List
+from utilities import Address, Credentials, Network, Outpoint
+
+
+def transfer(
+        credentials: Credentials,
+        consolidation_address: Address,
+        federation_address: Address,
+        mainchain_address: Address,
+        min_conf: int,
+        max_build_attempts: int,
+        simulate: bool = False) -> None:
+    """Transfers mature uxto from sidechain to mainchain.
+
+    :param Credentials credentials: Wallet credentials.
+    :param Address consolidation_address: The consolidation address.
+    :param Address federation_address: The cirrus federation address.
+    :param Address mainchain_address: The strax mainchain address.
+    :param int min_conf: Requires utxo to have this many confirmations before including in the consolidation transaction.
+    :param int max_build_attempts: Number of times to try to find correct fee during transaction build before failing.
+    :param bool simulate: Prints the transaction instead of transmitting.
+    :return: None
+    """
+    spendable_utxos_by_address = aggregate_spendable_utxos_by_address(
+        wallet_name=credentials.wallet_name,
+        min_conf=min_conf,
+        network=Network.CIRRUS)
+    current_address_spendable_utxos: List[Outpoint] = spendable_utxos_by_address.get(str(consolidation_address), [])
+    if len(current_address_spendable_utxos) > 0:
+        try:
+            print('Mature consolidated transactions found. Sending transaction to mainchain.')
+            payload = build_crosschain_transfer_payload(
+                outpoints=current_address_spendable_utxos,
+                credentials=credentials,
+                federation_address=federation_address,
+                mainchain_address=mainchain_address,
+                change_address=consolidation_address
+            )
+            send_batched_payload(
+                payload=payload,
+                num_attempts=max_build_attempts,
+                simulate=simulate,
+                crosschain=True)
+        except Exception as e:
+            print(e)
+    else:
+        print('No mature consolidated transactions found for cross chain transfer.')

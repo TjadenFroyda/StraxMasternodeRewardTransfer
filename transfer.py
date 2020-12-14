@@ -1,7 +1,7 @@
 from api import aggregate_spendable_utxos_by_address, send_batched_payload
 from api.payloads import build_crosschain_transfer_payload
 from typing import List
-from utilities import Address, Credentials, Network, Outpoint
+from utilities import Address, Credentials, Network, Outpoint, Money
 
 
 def transfer(
@@ -38,11 +38,15 @@ def transfer(
                 mainchain_address=mainchain_address,
                 change_address=consolidation_address
             )
-            send_batched_payload(
-                payload=payload,
-                num_attempts=max_build_attempts,
-                simulate=simulate,
-                crosschain=True)
+
+            if payload.amount > Money(10000000):
+                send_batched_payload(
+                    payload=payload,
+                    num_attempts=max_build_attempts,
+                    simulate=simulate,
+                    crosschain=True)
+            else:
+                print('Amount in consolidation address less than 1 CRS, skipping transfer.')
         except Exception as e:
             print(e)
     else:

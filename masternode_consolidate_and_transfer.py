@@ -17,7 +17,7 @@ WALLETNAME = 'MiningWallet'
 CIRRUS_FEDERATION_ADDR = Address(address='cYTNBJDbgjRgcKARAvi2UCSsDdyHkjUqJ2', network=Network.CIRRUS)
 MAINCHAIN_ADDR = Address(address=config('MAINCHAIN_ADDR'), network=Network.STRAX)
 CONSOLIDATION_ADDR = Address(address=config('CONSOLIDATION_ADDR'), network=Network.CIRRUS)
-SIMULATE_TRANSACTIONS = True
+SIMULATE_TRANSACTIONS = False
 
 
 if __name__ == '__main__':

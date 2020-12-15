@@ -24,6 +24,8 @@ Required nonstandard modules (pip install <module>):
 * more-itertools
 * cryptography
 * getpass
+* pytest (for testing)
+* pytest-mock (for testing)
  
 Notes:
 

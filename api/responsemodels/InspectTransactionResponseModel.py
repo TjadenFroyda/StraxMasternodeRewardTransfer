@@ -1,24 +1,21 @@
 from requests import Response
 
 
-class InspectRawTransactionResponseModel:
+class InspectTransactionResponseModel:
     """Response Model for decoderawtransaction api endpoint."""
     def __init__(self, response: Response):
         response = response.json()
         self._data = {}
-        if isinstance(response, dict) and 'errors' in response.keys():
-            self.errors = response.get('errors', [])
-        else:
-            self.transaction_id = response.get('txid', None)
-            self.hex = response.get('hex', None)
-            self.hash = response.get('hash', None)
-            self.version = response.get('version', None)
-            self.size = response.get('size', None)
-            self.vsize = response.get('vsize', None)
-            self.weight = response.get('weight', None)
-            self.locktime = response.get('locktime', None)
-            self.vin = response.get('vin', None)
-            self.vout = response.get('vout', None)
+        self.transaction_id = response.get('txid', None)
+        self.hex = response.get('hex', None)
+        self.hash = response.get('hash', None)
+        self.version = response.get('version', None)
+        self.size = response.get('size', None)
+        self.vsize = response.get('vsize', None)
+        self.weight = response.get('weight', None)
+        self.locktime = response.get('locktime', None)
+        self.vin = response.get('vin', None)
+        self.vout = response.get('vout', None)
 
     @property
     def transaction_id(self) -> str:
@@ -111,16 +108,6 @@ class InspectRawTransactionResponseModel:
         if not isinstance(val, list):
             raise ValueError('vout must be a list')
         self._data['vout'] = val
-
-    @property
-    def errors(self) -> list:
-        return self._data.get('errors', None)
-
-    @errors.setter
-    def errors(self, val: list) -> None:
-        if not isinstance(val, list):
-            raise ValueError('errors must be a list')
-        self._data['errors'] = val
 
     def serialize(self):
         return {k: str(v) for k, v in self._data.items()}

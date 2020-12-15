@@ -8,10 +8,7 @@ class SpendableTransactionsResponseModel:
         response = response.json()
         self._network = network
         self._data = {}
-        if isinstance(response, dict) and 'errors' in response.keys():
-            self.errors = response.get('errors', [])
-        else:
-            self.spendable = response.get('transactions', [])
+        self.spendable = response.get('transactions', [])
 
     @property
     def spendable(self) -> list:
@@ -22,13 +19,3 @@ class SpendableTransactionsResponseModel:
         if not isinstance(val, list):
             raise ValueError('Could not parse spendable transaction list.')
         self._data['spendable'] = [Outpoint(network=self._network, item=utxo) for utxo in val]
-
-    @property
-    def errors(self) -> list:
-        return self._data.get('errors', None)
-
-    @errors.setter
-    def errors(self, val: list) -> None:
-        if not isinstance(val, list):
-            raise ValueError('errors must be a list')
-        self._data['errors'] = val

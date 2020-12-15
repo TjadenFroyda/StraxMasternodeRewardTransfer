@@ -1,6 +1,6 @@
 from typing import List
 from utilities import Outpoint, Credentials, Network, Recipient, Money, Address
-from . import TransactionPayload
+from .TransactionPayload import TransactionPayload
 
 
 def build_consolidation_transaction_payload(
@@ -17,7 +17,6 @@ def build_consolidation_transaction_payload(
     :return: A transaction payload.
     :rtype: TransactionPayload
     """
-    # Build payload first.
     payload = TransactionPayload(network=Network.CIRRUS)
     payload.outpoints = outpoints
     recipients = [Recipient(network=Network.CIRRUS, item={'destinationAddress': destination_address})]
@@ -31,8 +30,4 @@ def build_consolidation_transaction_payload(
     payload.shuffle_outputs = False
     payload.change_address = destination_address
 
-    # Get fee estimate and update amounts.
-    from api import get_estimated_txfee
-    estimated_fee = get_estimated_txfee(payload=payload, crosschain=False)
-    payload.fee_amount = estimated_fee.fee
     return payload

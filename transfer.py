@@ -1,6 +1,6 @@
-from api import aggregate_spendable_utxos_by_address, send_batched_payload
-from api.payloads import build_crosschain_transfer_payload
 from typing import List
+from api import SwaggerAPI
+from api.payloads import build_crosschain_transfer_payload
 from utilities import Address, Credentials, Network, Outpoint, Money
 
 
@@ -23,31 +23,32 @@ def transfer(
     :param bool simulate: Prints the transaction instead of transmitting.
     :return: None
     """
-    spendable_utxos_by_address = aggregate_spendable_utxos_by_address(
+    api = SwaggerAPI()
+    spendable_utxos_by_address = api.get_spendable_transactions(
         wallet_name=credentials.wallet_name,
         min_conf=min_conf,
         network=Network.CIRRUS)
     current_address_spendable_utxos: List[Outpoint] = spendable_utxos_by_address.get(str(consolidation_address), [])
-    if len(current_address_spendable_utxos) > 0:
-        try:
-            print('Mature consolidated transactions found. Sending transaction to mainchain.')
-            payload = build_crosschain_transfer_payload(
-                outpoints=current_address_spendable_utxos,
-                credentials=credentials,
-                federation_address=federation_address,
-                mainchain_address=mainchain_address,
-                change_address=consolidation_address
-            )
-
-            if payload.amount > Money(10000000):
-                send_batched_payload(
-                    payload=payload,
-                    num_attempts=max_build_attempts,
-                    simulate=simulate,
-                    crosschain=True)
-            else:
-                print('Amount in consolidation address less than 1 CRS, skipping transfer.')
-        except Exception as e:
-            print(e)
-    else:
+    if len(current_address_spendable_utxos) < 1:
         print('No mature consolidated transactions found for cross chain transfer.')
+    else:
+        print('Mature consolidated transactions found. Sending transaction to mainchain.')
+        payload = build_crosschain_transfer_payload(
+            outpoints=current_address_spendable_utxos,
+            credentials=credentials,
+            federation_address=federation_address,
+            mainchain_address=mainchain_address,
+            change_address=consolidation_address
+        )
+        if payload.amount < Money(10000000):
+            print('Amount in consolidation address less than 1 CRS, skipping transfer.')
+        else:
+            transaction = api.build_transaction_with_lowest_fee(
+                payload=payload,
+                crosschain=True,
+                num_attempts=max_build_attempts)
+            if transaction is not None:
+                if simulate:
+                    api.inspect_transaction(transaction=transaction)
+                else:
+                    api.send_transaction(transaction=transaction)

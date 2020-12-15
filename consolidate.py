@@ -1,6 +1,6 @@
-from api import aggregate_spendable_utxos_by_address, send_batched_payload
-from api.payloads import build_consolidation_transaction_payload
 from more_itertools import chunked
+from api import SwaggerAPI
+from api.payloads import build_consolidation_transaction_payload
 from utilities import Address, Credentials, Network
 
 
@@ -21,7 +21,8 @@ def consolidate(
     :param bool simulate: Prints the transaction instead of transmitting.
     :return: None
     """
-    spendable_utxos_by_address = aggregate_spendable_utxos_by_address(
+    api = SwaggerAPI()
+    spendable_utxos_by_address = api.get_spendable_transactions(
         wallet_name=credentials.wallet_name,
         min_conf=min_conf,
         network=Network.CIRRUS)
@@ -33,15 +34,16 @@ def consolidate(
         total_amount_in_address = sum([int(utxo.amount) for utxo in current_address_spendable_utxos])
         print(f'Consolidating {address} with {len(current_address_spendable_utxos)} utxos. Total: {total_amount_in_address}.')
         for batch in chunked(current_address_spendable_utxos, batch_size):
-            try:
-                payload = build_consolidation_transaction_payload(
-                    outpoints=batch,
-                    credentials=credentials,
-                    destination_address=consolidation_address)
-                send_batched_payload(
-                    payload=payload,
-                    num_attempts=max_build_attempts,
-                    simulate=simulate,
-                    crosschain=False)
-            except Exception as e:
-                print(e)
+            payload = build_consolidation_transaction_payload(
+                outpoints=batch,
+                credentials=credentials,
+                destination_address=consolidation_address)
+            transaction = api.build_transaction_with_lowest_fee(
+                payload=payload,
+                crosschain=False,
+                num_attempts=max_build_attempts)
+            if transaction is not None:
+                if simulate:
+                    api.inspect_transaction(transaction=transaction)
+                else:
+                    api.send_transaction(transaction=transaction)

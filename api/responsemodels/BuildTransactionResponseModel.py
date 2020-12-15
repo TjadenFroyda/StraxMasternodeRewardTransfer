@@ -6,19 +6,13 @@ SATOSHI_CONVERSION = Decimal(1e8)
 
 
 class BuildTransactionResponseModel:
-    """Response model for build-transaction api endpoint.
-
-    Converts the fee to satoshi.
-    """
+    """Response model for build-transaction api endpoint."""
     def __init__(self, response: req.Response):
         response = response.json()
         self._data = {}
-        if isinstance(response, dict) and 'errors' in response.keys():
-            self.errors = response.get('errors', [])
-        else:
-            self.transaction_id = response.get('transactionId', None)
-            self.hex = response.get('hex', None)
-            self.fee = response.get('fee', None)
+        self.transaction_id = response.get('transactionId', None)
+        self.hex = response.get('hex', None)
+        self.fee = response.get('fee', None)
 
     @property
     def transaction_id(self) -> str:
@@ -51,13 +45,3 @@ class BuildTransactionResponseModel:
         if not isinstance(val, int) and not isinstance(val, Money):
             raise ValueError('fee must be int or Money.')
         self._data['fee'] = Money(val)
-
-    @property
-    def errors(self) -> list:
-        return self._data.get('errors', None)
-
-    @errors.setter
-    def errors(self, val: list) -> None:
-        if not isinstance(val, list):
-            raise ValueError('errors must be a list')
-        self._data['errors'] = val

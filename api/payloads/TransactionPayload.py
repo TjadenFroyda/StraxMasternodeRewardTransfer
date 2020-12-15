@@ -4,7 +4,7 @@ from utilities import Money, Address, Network, Outpoint, Recipient
 
 
 class TransactionPayload:
-    """Creates a transaction payload to build and send on either STRAX or Cirrus network."""
+    """Creates a transaction payload to build and send on either Stratis or Cirrus networks."""
     def __init__(self, network: Network):
         self._data = {}
         self._network = network
@@ -173,6 +173,7 @@ class TransactionPayload:
     def get_estimate_txfee_payload(self, crosschain: bool) -> dict:
         """Generates a payload dict specific for the estimate_txfee endpoint.
 
+        :param bool crosschain: If this is a crosschain transaction.
         :return: A txfee estimation payload.
         :rtype: dict
         :raises EstimatePayloadException: If required keys are not present.
@@ -186,6 +187,7 @@ class TransactionPayload:
         # FeeType is specific to this endpoint.
         estimate_txfee_payload['feeType'] = 'low'
 
+        # Need opReturnData for crosschain transactions.
         if crosschain:
             required_keys.append('opReturnData')
 
@@ -198,22 +200,25 @@ class TransactionPayload:
     def get_build_transaction_payload(self, crosschain: bool) -> dict:
         """Generates a payload dict specific for the build_transaction endpoint.
 
+        :param bool crosschain: If this is a crosschain transaction.
         :return: A build_transaction payload.
         :rtype: dict
         :raises BuildTransactionPayloadException: if required keys are not present.
         """
         required_keys = ['sender', 'walletName', 'accountName', 'password', 'outpoints', 'recipients', 'feeAmount', 'changeAddress']
 
+        # Need opReturnData for crosschain transactions.
         if crosschain:
             required_keys.append('opReturnData')
 
+        # Check to see if all the required keys are present.
         if not all(key in self._data.keys() for key in required_keys):
             raise BuildTransactionPayloadException(f'Not all required fields present. Required: {required_keys}.')
 
         return self._serialize_data(self._data)
 
     def _serialize_data(self, data: dict) -> dict:
-        """Serializes the payload"""
+        """Serializes the payload."""
         payload = {}
         for k, v in data.items():
             if k in ['outpoints', 'recipients']:

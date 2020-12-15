@@ -43,7 +43,6 @@ if __name__ == '__main__':
                 batch_size=BATCH_SIZE,
                 simulate=SIMULATE_TRANSACTIONS)
         except Exception as e:
-            # This will catch connection errors, such as when the cirrus node is not running.
             print(e)
 
         print(f'Done with consolidation at {datetime.now()}.\nNext run: {datetime.now() + timedelta(hours=HOURS_BETWEEN_CONSOLIDATIONS)}.')

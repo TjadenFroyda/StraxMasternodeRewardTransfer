@@ -1,6 +1,6 @@
 from typing import List
 from utilities import Outpoint, Credentials, Network, Recipient, Money, Address
-from . import TransactionPayload
+from .TransactionPayload import TransactionPayload
 
 
 def build_crosschain_transfer_payload(
@@ -36,8 +36,4 @@ def build_crosschain_transfer_payload(
     payload.shuffle_outputs = False
     payload.change_address = change_address
 
-    # Get fee estimate and update amounts.
-    from api import get_estimated_txfee
-    estimated_fee = get_estimated_txfee(payload=payload, crosschain=True)
-    payload.fee_amount = estimated_fee.fee
     return payload

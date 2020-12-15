@@ -1,30 +1,31 @@
-from api.payloads import TransactionPayload
 from api.responsemodels import EstimatedTxFeeResponseModel
-from exceptions import InsufficientFundsForTransactionException, NodeResponseException
+from exceptions import NodeResponseException
 import json
 import requests as req
+from .ErrorResponse import ErrorResponse
+from .check_insufficient_funds import check_insufficient_funds
 
 
 def get_estimated_txfee(
-        payload: TransactionPayload,
-        crosschain: bool) -> EstimatedTxFeeResponseModel:
+        uri: str,
+        payload: dict) -> EstimatedTxFeeResponseModel:
     """Calls the estimate-txfee api endpoint to calculate the transaction fee.
 
-    :param TransactionPayload payload: An instance of TransactionPayload.
-    :param bool crosschain: If transaction is being sent crosschain.
+    :param str uri: The uri.
+    :param dict payload: An instance of TransactionPayload.
     :return: The estimated fee for this transaction.
     :rtype: EstimatedTxFeeResponseModel
     :raises NodeResponseException: If HTTP post request not successful.
     :raises InsufficientFundsForTransactionException: If not enough funds in the address for the transaction.
     """
-    from . import SwaggerAPI
-    api = SwaggerAPI()
-    uri = f'{api.base_uri}/Wallet/estimate-txfee'
-    res = req.post(uri, data=json.dumps(payload.get_estimate_txfee_payload(crosschain=crosschain)), headers=api.headers)
+    headers = {'Accept': '*/*', 'Content-Type': 'application/json'}
+    res = req.post(
+        url=uri,
+        data=json.dumps(payload),
+        headers=headers)
     if res.status_code == 200:
         return EstimatedTxFeeResponseModel(res)
     if res.status_code == 400:
-        message = EstimatedTxFeeResponseModel(res).errors[0].get('message')
-        if 'Not enough funds to cover the target' in message:
-            raise InsufficientFundsForTransactionException('Not enough funds in this address for this transaction.')
-    raise NodeResponseException(message='Error estimating transaction fee.', response=res.json())
+        error = ErrorResponse(response=res)
+        check_insufficient_funds(error)
+        raise NodeResponseException(message='Error estimating transaction fee.', response=str(error.json))

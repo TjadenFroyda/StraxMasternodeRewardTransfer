@@ -1,43 +1,27 @@
-from api import inspect_raw_transaction
-from api.responsemodels import InspectRawTransactionResponseModel
+import pytest
+from pytest_mock import MockerFixture
+from api import SwaggerAPI
 from exceptions import NodeResponseException
-from random import choice
-import unittest
-import unittest.mock as mock
+from .generators import generate_transaction_hash, generate_hexstring
 
 
-class InspectRawTransactionTests(unittest.TestCase):
-    def setUp(self) -> None:
-        self.hex_string = self._generate_hexstring()
+def test_inspect_transaction_is_successful(mocker: MockerFixture):
+    transaction = mocker.Mock(hex=generate_hexstring())
+    response = mocker.MagicMock(status_code=200)
+    response.json.return_value = {
+        "hex": generate_hexstring(), "txid": generate_transaction_hash(), "hash": generate_transaction_hash(), "version": 1, "size": 181,
+        "vsize": 154, "weight": 613, "locktime": 0, "vin": [{}], "vout": [{}]
+    }
+    mocker.patch('requests.post', return_value=response)
+    api = SwaggerAPI()
 
-    def tearDown(self) -> None:
-        pass
-
-    def _generate_transaction_hash(self) -> str:
-        letters = '0123456789abcdef'
-        return ''.join(choice(letters) for _ in range(64))
-
-    def _generate_hexstring(self) -> str:
-        letters = '0123456789abcdef'
-        return ''.join(choice(letters) for _ in range(128))
-
-    def test_inspect_raw_transaction_is_successful(self):
-        payload = mock.Mock(hex=self.hex_string)
-        response = mock.MagicMock(status_code=200)
-        response.json.return_value = {
-            "hex": self._generate_hexstring(), "txid": self._generate_transaction_hash(), "hash": self._generate_transaction_hash(), "version": 1, "size": 181,
-            "vsize": 154, "weight": 613, "locktime": 0, "vin": [{}], "vout": [{}]
-        }
-        with mock.patch('requests.post', return_value=response):
-            response = inspect_raw_transaction(payload)
-            assert isinstance(response, InspectRawTransactionResponseModel)
-
-    def test_inspect_raw_transaction_raises_noderesponseexception(self):
-        payload = mock.Mock(hex=self.hex_string)
-        with mock.patch('requests.post', return_value=mock.MagicMock(status_code=400)):
-            with self.assertRaises(NodeResponseException):
-                inspect_raw_transaction(payload)
+    api.inspect_transaction(transaction=transaction)
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_inspect_transaction_raises_noderesponseexception(mocker: MockerFixture):
+    transaction = mocker.Mock(hex=generate_hexstring())
+    mocker.patch('requests.post', return_value=mocker.MagicMock(status_code=400))
+    api = SwaggerAPI()
+
+    with pytest.raises(NodeResponseException):
+        api.inspect_transaction(transaction=transaction)

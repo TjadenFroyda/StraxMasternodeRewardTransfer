@@ -19,7 +19,7 @@ def test_inspect_transaction_response_model(mocker: MockerFixture):
     response = mocker.MagicMock()
     response.json.return_value = mock_raw_transaction
 
-    trx = InspectTransactionResponseModel(response)
+    trx = InspectTransactionResponseModel(response=response)
 
     assert trx.transaction_id == mock_raw_transaction['txid']
     assert trx.hex == mock_raw_transaction['hex']

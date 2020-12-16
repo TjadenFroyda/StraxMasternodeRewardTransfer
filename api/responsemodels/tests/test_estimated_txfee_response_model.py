@@ -9,14 +9,14 @@ def test_estimated_txfee_response_model_large_fee_raises_valueerror(mocker: Mock
     response.json.return_value = 500000000
 
     with pytest.raises(ValueError):
-        EstimatedTxFeeResponseModel(response)
+        EstimatedTxFeeResponseModel(response=response)
 
 
 def test_estimated_txfee_response_model_reasonable_fee_is_successful(mocker: MockerFixture):
     response = mocker.MagicMock()
     response.json.return_value = 10000
 
-    trx = EstimatedTxFeeResponseModel(response)
+    trx = EstimatedTxFeeResponseModel(response=response)
 
     assert trx.fee == 10000
     assert isinstance(trx.fee, Money)

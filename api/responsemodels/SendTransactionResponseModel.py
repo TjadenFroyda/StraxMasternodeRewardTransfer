@@ -6,7 +6,7 @@ class SendTransactionResponseModel:
     def __init__(self, response: Response):
         response = response.json()
         self._data = {}
-        self.transactionId = response.get('transactionId', None)
+        self.transaction_id = response.get('transactionId', None)
         self.outputs = response.get('outputs', None)
 
     @property

@@ -7,7 +7,7 @@ def build_consolidation_transaction_payload(
         outpoints: List[Outpoint],
         credentials: Credentials,
         destination_address: Address,
-        fee: Money = Money(10000)) -> TransactionPayload:
+        fee: Money = Money(20000)) -> TransactionPayload:
     """Builds a consolidation transaction payload.
 
     :param List[Outpoint] outpoints: The outpoints to include in the transaction.

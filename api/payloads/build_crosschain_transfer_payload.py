@@ -9,7 +9,7 @@ def build_crosschain_transfer_payload(
         federation_address: Address,
         mainchain_address: Address,
         change_address: Address,
-        fee: Money = Money(10000)) -> TransactionPayload:
+        fee: Money = Money(20000)) -> TransactionPayload:
     """Builds a crosschain transfer payload.
 
     :param List[Outpoint] outpoints: The outpoints to include in the transaction.

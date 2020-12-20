@@ -32,7 +32,7 @@ class TransactionPayload:
 
     @property
     def fee_amount(self) -> Money:
-        return self._data.get('feeAmount', Money(10000))
+        return self._data.get('feeAmount', Money(20000))
 
     @fee_amount.setter
     def fee_amount(self, val: Union[Money, int]) -> None:
@@ -43,9 +43,9 @@ class TransactionPayload:
         val = int(val)
         if val > 100000000:
             raise RecommendedFeeTooHighException(message='Setting fee higher than 1 CRS.', fee=Money(val))
-        if val < 10000:
-            print('Minimum fee is 10000. Adjusting.')
-            val = 10000
+        if val < 20000:
+            print('Minimum fee is 20000. Adjusting.')
+            val = 20000
         self._data['feeAmount'] = Money(val)
         if self.recipients is not None:
             self.recipients[0].amount = self.amount - Money(val)

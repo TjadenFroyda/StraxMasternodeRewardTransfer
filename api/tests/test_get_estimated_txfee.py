@@ -9,14 +9,14 @@ def test_estimated_txfee_is_successful(mocker: MockerFixture):
     payload = mocker.MagicMock()
     payload.get_estimate_txfee_payload.return_value = {'dummy': 'values'}
     response = mocker.MagicMock(status_code=200)
-    response.json.return_value = 10000
+    response.json.return_value = 20000
     mocker.patch('requests.post', return_value=response)
     api = SwaggerAPI()
 
     response = api.get_estimated_txfee(payload=payload, crosschain=True)
 
     assert isinstance(response, EstimatedTxFeeResponseModel)
-    assert response.fee == 10000
+    assert response.fee == 20000
 
 
 def test_estimated_txfee_raises_insufficient_funds_exception(mocker: MockerFixture):

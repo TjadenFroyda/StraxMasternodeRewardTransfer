@@ -8,7 +8,7 @@ from .generators import generate_transaction_hash, generate_cirrus_address, gene
 def test_create_payload_is_successful():
     num_outpoints = 7
     outpoint_amount = 20000
-    fee_amount = 10000
+    fee_amount = 20000
     cirrus_address_sender = generate_cirrus_address()
     cirrus_address_recipient = generate_cirrus_address()
     outpoints = [
@@ -33,7 +33,7 @@ def test_create_payload_is_successful():
 def test_create_payload_recipient_changed_fee_amount_updated():
     num_outpoints = 7
     outpoint_amount = 20000
-    fee_amount = 10000
+    fee_amount = 20000
     cirrus_address_sender = generate_cirrus_address()
     cirrus_address_recipient = generate_cirrus_address()
     outpoints = [
@@ -56,7 +56,7 @@ def test_create_payload_recipient_changed_fee_amount_updated():
 def test_create_payload_get_estimate_txfee_payload_is_successful():
     num_outpoints = 7
     outpoint_amount = 20000
-    fee_amount = 10000
+    fee_amount = 20000
     cirrus_address_sender = generate_cirrus_address()
     cirrus_address_recipient = generate_cirrus_address()
     opreturn_address = generate_strax_address()
@@ -94,7 +94,7 @@ def test_create_payload_get_estimate_txfee_payload_is_successful():
 def test_create_payload_get_estimate_txfee_payload_missing_opreturn_on_crosschain_transfer_raises_exception():
     num_outpoints = 7
     outpoint_amount = 20000
-    fee_amount = 10000
+    fee_amount = 20000
     cirrus_address_sender = generate_cirrus_address()
     cirrus_address_recipient = generate_cirrus_address()
     # opreturn_address = generate_strax_address()
@@ -122,7 +122,7 @@ def test_create_payload_get_estimate_txfee_payload_missing_opreturn_on_crosschai
 def test_create_payload_get_estimate_txfee_payload_missing_recipients_raises_exception():
     num_outpoints = 7
     outpoint_amount = 20000
-    fee_amount = 10000
+    fee_amount = 20000
     cirrus_address_sender = generate_cirrus_address()
     # cirrus_address_recipient = generate_cirrus_address()
     outpoints = [
@@ -147,7 +147,7 @@ def test_create_payload_get_estimate_txfee_payload_missing_recipients_raises_exc
 
 
 def test_create_payload_get_estimate_txfee_payload_missing_outpoints_raises_exception():
-    fee_amount = Money(10000)
+    fee_amount = Money(20000)
     cirrus_address_recipient = generate_cirrus_address()
     payload = TransactionPayload(network=Network.CIRRUS)
     payload.wallet_name = 'test'
@@ -169,7 +169,7 @@ def test_create_payload_get_estimate_txfee_payload_missing_outpoints_raises_exce
 def test_create_payload_get_build_transaction_payload_is_successful():
     num_outpoints = 7
     outpoint_amount = 20000
-    fee_amount = 10000
+    fee_amount = 20000
     cirrus_address_sender = generate_cirrus_address()
     cirrus_address_recipient = generate_cirrus_address()
     opreturn_address = generate_strax_address()
@@ -209,7 +209,7 @@ def test_create_payload_get_build_transaction_payload_is_successful():
 def test_create_payload_get_build_transaction_payload_missing_opreturn_on_crosschain_raises_exception():
     num_outpoints = 7
     outpoint_amount = 20000
-    fee_amount = 10000
+    fee_amount = 20000
     cirrus_address_sender = generate_cirrus_address()
     cirrus_address_recipient = generate_cirrus_address()
     # opreturn_address = generate_strax_address()
@@ -236,7 +236,7 @@ def test_create_payload_get_build_transaction_payload_missing_opreturn_on_crossc
 
 
 def test_create_payload_get_build_transaction_payload_missing_outpoints_raises_exception():
-    fee_amount = Money(10000)
+    fee_amount = Money(20000)
     cirrus_address_sender = generate_cirrus_address()
     cirrus_address_recipient = generate_cirrus_address()
     opreturn_address = generate_strax_address()
@@ -261,7 +261,7 @@ def test_create_payload_get_build_transaction_payload_missing_outpoints_raises_e
 def test_create_payload_get_build_transaction_payload_missing_recipients_raises_exception():
     num_outpoints = 7
     outpoint_amount = 20000
-    fee_amount = 10000
+    fee_amount = 20000
     cirrus_address_sender = generate_cirrus_address()
     # cirrus_recipient_address = generate_cirrus_address()
     opreturn_address = generate_strax_address()

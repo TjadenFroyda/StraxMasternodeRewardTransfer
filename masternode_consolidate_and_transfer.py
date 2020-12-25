@@ -44,6 +44,8 @@ if __name__ == '__main__':
                 simulate=SIMULATE_TRANSACTIONS)
         except Exception as e:
             print(e)
+            if hasattr(e, 'response'):
+                print(e.response)
 
         print(f'Done with consolidation at {datetime.now()}.\nNext run: {datetime.now() + timedelta(hours=HOURS_BETWEEN_CONSOLIDATIONS)}.')
         time.sleep(SECONDS_PER_HOUR * HOURS_BETWEEN_CONSOLIDATIONS)

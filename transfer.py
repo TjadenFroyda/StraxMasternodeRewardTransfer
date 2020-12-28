@@ -40,7 +40,7 @@ def transfer(
             mainchain_address=mainchain_address,
             change_address=consolidation_address
         )
-        if payload.amount < Money(10000000):
+        if payload.amount < Money(100000000):
             print('Amount in consolidation address less than 1 CRS, skipping transfer.')
         else:
             transaction = api.build_transaction_with_lowest_fee(

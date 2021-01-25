@@ -35,7 +35,12 @@ if __name__ == '__main__':
                 max_build_attempts=MAX_BUILD_ATTEMPTS,
                 min_conf=MIN_CONF,
                 simulate=SIMULATE_TRANSACTIONS)
-
+        except Exception as e:
+            print(e)
+            if hasattr(e, 'response'):
+                print(e.response)
+        
+        try:
             # Move other utxos to the consolidation address
             consolidate(
                 credentials=creds,

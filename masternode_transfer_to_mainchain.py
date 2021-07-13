@@ -24,8 +24,8 @@ BATCH_SIZE = 64
 HOURS_BETWEEN_CONSOLIDATIONS = 6
 SECONDS_PER_HOUR = 3600
 WALLETNAME = 'MiningWallet'
-CIRRUS_FEDERATION_ADDR = Address(address='cYTNBJDbgjRgcKARAvi2UCSsDdyHkjUqJ2', network=CirrusMain())
-MAINCHAIN_ADDR = Address(address=config('MAINCHAIN_ADDR'), network=StraxMain())
+CIRRUS_FEDERATION_ADDRESS = Address(address='cYTNBJDbgjRgcKARAvi2UCSsDdyHkjUqJ2', network=CirrusMain())
+MAINCHAIN_ADDRESS = Address(address=config('MAINCHAIN_ADDRESS'), network=StraxMain())
 SENDING_ADDRESS = Address(address=config('SENDING_ADDRESS'), network=CirrusMain())
 SIMULATE_TRANSACTIONS = False
 
@@ -134,8 +134,8 @@ if __name__ == '__main__':
         transfer(
             credentials=creds,
             sending_address=SENDING_ADDRESS,
-            federation_address=CIRRUS_FEDERATION_ADDR,
-            mainchain_address=MAINCHAIN_ADDR,
+            federation_address=CIRRUS_FEDERATION_ADDRESS,
+            mainchain_address=MAINCHAIN_ADDRESS,
             max_build_attempts=MAX_BUILD_ATTEMPTS,
             simulate=SIMULATE_TRANSACTIONS
         )

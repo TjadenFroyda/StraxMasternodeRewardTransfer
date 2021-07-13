@@ -1,5 +1,5 @@
 
-Stratis/Cirrus Masternode Mainchain Transfer Script
+Stratis/Cirrus Masternode Reward Transfer Script
 =======================================================
 ---
 Author: TjadenFroyda
@@ -9,20 +9,23 @@ STRAX: XZSwKL8xB3CbKB4Sua5yqNzNm9PeKG1xJN
 version: 2.0
 
 ---
-Module for transfering CIRRUS masternode reward utxo to STRAX mainchain.
+A script, based on [pystratis](http://github.com/stratisproject/pystratis), for automating the transfer of CIRRUS masternode rewards to STRAX mainchain.
+- **Validates crosschain address to prevent errors!**
+- Tries to send transaction with lowest possible fee.
+- Transfers funds every 6 hours (change with `HOURS_BETWEEN_CONSOLIDATIONS`)
 
-Tested and working, but use at your own risk!!!!!
+***Tested and working, but use at your own risk!!!!!***
 
 #### Usage
 ```commandline
-python masternode_transfer_to_mainchain.py
+python transfer_masternode_reward_to_mainchain.py [--simulate] [--help]
 ```
 
-Required nonstandard modules (pip install <module>):
+Required non-standard modules (pip install <module>):
 
-* pystratis 
-* python-decouple
-* cryptography
+- pystratis 
+- python-decouple
+- cryptography
  
 ### Notes
 
@@ -33,17 +36,17 @@ MAINCHAIN_ADDRESS='<YOUR MAINCHAIN ADDRESS HERE>'
 ```
 OR
     
-Modify those two strings in `masternode_transfer_to_mainchain.py` as shown in the code below with the respective addresses.
+Modify the following two statements in `transfer_masternode_reward_to_mainchain.py` as shown in the code below with the respective addresses.
 ```python
 MAINCHAIN_ADDRESS = Address(address='<YOUR MAINCHAIN ADDRESS HERE>', network=StraxMain())
 SENDING_ADDRESS = Address(address='<YOUR SENDING ADDRESS HERE>', network=CirrusMain())
 ```
 
-Recommend setting SIMULATE_TRANSACTIONS in `masternode_transfer_to_mainchain.py` to True for testing.
-
-You can verify your **crosschain transfer address** by decoding the hexencoded **OP_RETURN** string. 
-
-This is done during transaction simulation and printed for inspection. 
+### Transaction simulation
+- Set `--simulate` command line flag 
+- During simulation, you can verify important transaction details:
+  * **Crosschain transfer address**
+  * **Amount being sent** and **multisig federation address**
 
 ### Changelog
 #### Version 2.0

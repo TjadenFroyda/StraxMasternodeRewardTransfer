@@ -3,6 +3,7 @@
 import time
 import re
 import ast
+import argparse
 from binascii import unhexlify
 from decouple import config
 from datetime import datetime, timedelta
@@ -23,7 +24,6 @@ WALLETNAME = 'MiningWallet'
 CIRRUS_FEDERATION_ADDRESS = Address(address='cYTNBJDbgjRgcKARAvi2UCSsDdyHkjUqJ2', network=CirrusMain())
 MAINCHAIN_ADDRESS = Address(address=config('MAINCHAIN_ADDRESS'), network=StraxMain())
 SENDING_ADDRESS = Address(address=config('SENDING_ADDRESS'), network=CirrusMain())
-SIMULATE_TRANSACTIONS = False
 
 
 def transfer(
@@ -32,7 +32,7 @@ def transfer(
         federation_address: Address,
         mainchain_address: Address,
         max_build_attempts: int,
-        simulate: bool = True
+        simulate: bool
 ) -> None:
     """Transfers mature uxto from sidechain to specified mainchain address.
 
@@ -42,7 +42,7 @@ def transfer(
         federation_address (Address): The cirrus federation address.
         mainchain_address (Address): The strax mainchain address.
         max_build_attempts (int): Number of times to try to find correct fee during transaction build before failing.
-        simulate (bool): Prints the transaction instead of transmitting.
+        simulate (bool): Prints the transaction instead of transmitting. Default=False. (cmdline arg '--simulate')
 
     Returns:
         None
@@ -128,6 +128,10 @@ def transfer(
 
 
 if __name__ == '__main__':
+    # Parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--simulate', dest='simulate', default=False, action='store_true', help='Inspect the built transaction without sending.')
+    args = parser.parse_args()
     creds = Credentials(wallet_name=WALLETNAME)
     creds.set_wallet_password()
 
@@ -138,7 +142,7 @@ if __name__ == '__main__':
             federation_address=CIRRUS_FEDERATION_ADDRESS,
             mainchain_address=MAINCHAIN_ADDRESS,
             max_build_attempts=MAX_BUILD_ATTEMPTS,
-            simulate=SIMULATE_TRANSACTIONS
+            simulate=args.simulate
         )
         current_time = datetime.now()
         next_run = (current_time + timedelta(hours=HOURS_BETWEEN_CONSOLIDATIONS))

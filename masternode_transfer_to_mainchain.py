@@ -60,7 +60,7 @@ def transfer(
         print('Cannot send transfer than 1 CRS, skipping transfer.')
     else:
         print('Mature consolidated transactions found. Sending transaction to mainchain.')
-        fee_amount = Money('0.00000001')
+        fee_amount = Money('0.00010000')
         for _ in range(max_build_attempts):
             try:
                 payload = node.wallet.build_transaction(

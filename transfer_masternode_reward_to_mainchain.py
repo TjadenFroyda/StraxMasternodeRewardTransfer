@@ -100,9 +100,8 @@ def transfer(
                     outputs = send_transaction_model.outputs
                     for item in outputs:
                         if item.amount == Money(0):
-                            op_return_data = item.op_return_data
-                            if op_return_data is not None:
-                                print(f"Cross-chain address in OP_RETURN: {op_return_data}.")
+                            if item.op_return_data is not None:
+                                print(f"Cross-chain address in OP_RETURN: {item.op_return_data}.")
                         else:
                             amount_being_sent = item.amount
                             receiving_address = item.address

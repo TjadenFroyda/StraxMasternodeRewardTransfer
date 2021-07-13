@@ -25,7 +25,7 @@ Required nonstandard modules (pip install <module>):
 * pytest (for testing)
 * pytest-mock (for testing)
  
-Notes:
+### Notes
 
 The following variables must be set in a file named .env in the same folder as this module. 
 ```
@@ -42,13 +42,13 @@ SENDING_ADDRESS = Address(address='<YOUR SENDING ADDRESS HERE>', network=CirrusM
 
 Recommend setting SIMULATE_TRANSACTIONS in `masternode_transfer_to_mainchain.py` to True for testing.
 
-You can verify your **crosschain transfer address** by decoding the hexencoded **opReturnData** string. 
+You can verify your **crosschain transfer address** by decoding the hexencoded **opReturnData** string. This is done during transaction simulation. 
 
-## Changelog
-### Version 2.0
+### Changelog
+#### Version 2.0
 - [pystratis](http://github.com/stratisproject/pystratis) refactor
 
-### Version 1.0
+#### Version 1.0
 - Address validation by network
 - Payload validation
 - API response models
@@ -58,7 +58,7 @@ You can verify your **crosschain transfer address** by decoding the hexencoded *
 - Unit testing
 - README documentation
 
-### Version 0.1
+#### Version 0.1
 - [Initial script](http://pastebin.com/VUarbCcE)
 
   

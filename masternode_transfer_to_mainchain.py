@@ -27,7 +27,7 @@ WALLETNAME = 'MiningWallet'
 CIRRUS_FEDERATION_ADDR = Address(address='cYTNBJDbgjRgcKARAvi2UCSsDdyHkjUqJ2', network=CirrusMain())
 MAINCHAIN_ADDR = Address(address=config('MAINCHAIN_ADDR'), network=StraxMain())
 SENDING_ADDRESS = Address(address=config('SENDING_ADDRESS'), network=CirrusMain())
-SIMULATE_TRANSACTIONS = True
+SIMULATE_TRANSACTIONS = False
 
 
 def transfer(

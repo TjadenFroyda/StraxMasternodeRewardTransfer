@@ -4,7 +4,6 @@ import time
 import re
 import ast
 from binascii import unhexlify
-from typing import List
 from decouple import config
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -15,12 +14,9 @@ from pystratis.api import APIError
 from pystratis.api.node.responsemodels import TransactionModel
 from pystratis.core.networks import StraxMain, CirrusMain
 from credentials import Credentials
-import pdb
 
 
-MIN_CONF = 0
 MAX_BUILD_ATTEMPTS = 10
-BATCH_SIZE = 64
 HOURS_BETWEEN_CONSOLIDATIONS = 6
 SECONDS_PER_HOUR = 3600
 WALLETNAME = 'MiningWallet'
@@ -36,7 +32,8 @@ def transfer(
         federation_address: Address,
         mainchain_address: Address,
         max_build_attempts: int,
-        simulate: bool = True) -> None:
+        simulate: bool = True
+) -> None:
     """Transfers mature uxto from sidechain to specified mainchain address.
 
     Args:
@@ -51,9 +48,13 @@ def transfer(
         None
     """
     node = CirrusNode()
+    # Retrieve spendable transactions from the node
     s_txs = node.wallet.spendable_transactions(wallet_name=credentials.wallet_name)
     s_txs = [x for x in s_txs.transactions]
+
+    # Determine the amount that is transferable.
     s_txs_amount = Money(sum([x.amount.value for x in s_txs]))
+
     if len(s_txs) < 1:
         print('No mature consolidated transactions found for cross chain transfer.')
     elif s_txs_amount < Money('1.0'):

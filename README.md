@@ -1,5 +1,5 @@
 
-Stratis/Cirrus Masternode Fee Consolidation and Mainchain Transfer
+Stratis/Cirrus Masternode Mainchain Transfer Script
 =======================================================
 ---
 Author: TjadenFroyda
@@ -9,12 +9,13 @@ STRAX: XZSwKL8xB3CbKB4Sua5yqNzNm9PeKG1xJN
 version: 2.0
 
 ---
-Module for consolidating CIRRUS masternode reward utxo and transferring to STRAX mainchain.
+Module for transfering CIRRUS masternode reward utxo to STRAX mainchain.
 
 Tested and working, but use at your own risk!!!!!
 
-```
-usage: python masternode_consolidate_and_transfer.py
+#### Usage
+```commandline
+python masternode_transfer_to_mainchain.py
 ```
 
 Required nonstandard modules (pip install <module>):
@@ -22,31 +23,32 @@ Required nonstandard modules (pip install <module>):
 * pystratis 
 * python-decouple
 * cryptography
-* pytest (for testing)
-* pytest-mock (for testing)
  
 ### Notes
 
 The following variables must be set in a file named .env in the same folder as this module. 
-```
+```text
 SENDING_ADDRESS='<YOUR SENDING ADDRESS HERE>'
-MAINCHAIN_ADDR='<YOUR MAINCHAIN ADDRESS HERE>'
+MAINCHAIN_ADDRESS='<YOUR MAINCHAIN ADDRESS HERE>'
 ```
 OR
     
 Modify those two strings in `masternode_transfer_to_mainchain.py` as shown in the code below with the respective addresses.
-```
-MAINCHAIN_ADDR = Address(address='<YOUR MAINCHAIN ADDRESS HERE>', network=StraxMain())
+```python
+MAINCHAIN_ADDRESS = Address(address='<YOUR MAINCHAIN ADDRESS HERE>', network=StraxMain())
 SENDING_ADDRESS = Address(address='<YOUR SENDING ADDRESS HERE>', network=CirrusMain())
 ```
 
 Recommend setting SIMULATE_TRANSACTIONS in `masternode_transfer_to_mainchain.py` to True for testing.
 
-You can verify your **crosschain transfer address** by decoding the hexencoded **opReturnData** string. This is done during transaction simulation. 
+You can verify your **crosschain transfer address** by decoding the hexencoded **OP_RETURN** string. 
+
+This is done during transaction simulation and printed for inspection. 
 
 ### Changelog
 #### Version 2.0
-- [pystratis](http://github.com/stratisproject/pystratis) refactor
+- [pystratis](http://github.com/stratisproject/pystratis) refactor.
+- Most of the functionality from version 1.0 has been incorporated into pystratis. 
 
 #### Version 1.0
 - Address validation by network

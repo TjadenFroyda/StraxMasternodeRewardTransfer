@@ -1,5 +1,3 @@
 pystratis
 python-decouple
 cryptography
-pytest
-pytest-mock

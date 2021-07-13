@@ -89,15 +89,25 @@ def transfer(
                             # The hex-encoded destination address is the second portion of the OP_RETURN.
                             # We need to split the data at the space, unhexify, and decode to utf-8.
                             op_return_address = unhexlify(op_return_data.split(' ')[1]).decode('utf-8')
-                            print(f"Cross-chain address in OP_RETURN: {op_return_address}")
+                            print(f"Cross-chain address in OP_RETURN: {op_return_address}.")
                         else:
                             # Validate that the correct amount is being sent to the federation multisig address.
                             amount_being_sent = item['value']
                             receiving_address = item['script_pubkey']['addresses'][0]
-                            print(f"Sending {amount_being_sent} to {receiving_address}")
+                            print(f"Sending {amount_being_sent} to {receiving_address}.")
                 else:
                     send_transaction_model = node.wallet.send_transaction(transaction_hex=payload.hex)
-                    print(f'Transaction sent with transaction id: {send_transaction_model.transaction_id}')
+                    outputs = send_transaction_model.outputs
+                    for item in outputs:
+                        if item.amount == Money(0):
+                            op_return_data = item.op_return_data
+                            if op_return_data is not None:
+                                op_return_address = unhexlify(op_return_data.split(' ')[1]).decode('utf-8')
+                                print(f"Cross-chain address in OP_RETURN: {op_return_address}.")
+                        else:
+                            amount_being_sent = item.amount
+                            receiving_address = item.address
+                            print(f"Sending {amount_being_sent} to {receiving_address}.")
                 # Break on success.
                 break
             except APIError as e:

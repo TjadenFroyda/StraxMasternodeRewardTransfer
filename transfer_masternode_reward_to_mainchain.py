@@ -6,6 +6,7 @@ import ast
 import argparse
 from typing import List, Union, Optional
 from binascii import unhexlify
+from requests.exceptions import ReadTimeout
 from decouple import config
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -108,7 +109,7 @@ def build_transaction_payload(
     }
 
 
-def try_build_transaction(payload: dict) -> Union[BuildTransactionModel, APIError]:
+def try_build_transaction(payload: dict) -> Union[BuildTransactionModel, APIError, ReadTimeout, Exception]:
     """Attempt to build a transaction on the node.
 
     Args:
@@ -133,6 +134,12 @@ def try_build_transaction(payload: dict) -> Union[BuildTransactionModel, APIErro
             op_return_data=str(payload['mainchain_address'])
         )
     except APIError as e:
+        return e
+    except ReadTimeout as e:
+        print('Timeout.')
+        return e
+    except Exception as e:
+        print(e)
         return e
 
 

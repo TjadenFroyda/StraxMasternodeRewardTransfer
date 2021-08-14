@@ -205,13 +205,13 @@ def inspect_transaction(node: CirrusNode, built_transaction_model: BuildTransact
 def send_transaction(node: CirrusNode, built_transaction_model: BuildTransactionModel):
     """Sends the built transaction and prints the transaction information.
 
-        Args:
-            node (CirrusNode): A CirrusNode instance.
-            built_transaction_model (BuildTransactionModel): The built transaction for inspection.
+    Args:
+        node (CirrusNode): A CirrusNode instance.
+        built_transaction_model (BuildTransactionModel): The built transaction for inspection.
 
-        Returns:
-            None: Prints the amount being sent, the multisig address, and the mainchain address to stdout.
-        """
+    Returns:
+        None: Prints the amount being sent, the multisig address, and the mainchain address to stdout.
+    """
     send_transaction_model = node.wallet.send_transaction(transaction_hex=built_transaction_model.hex)
     outputs = send_transaction_model.outputs
     for item in outputs:
@@ -283,26 +283,29 @@ if __name__ == '__main__':
     node = CirrusNode()
     while True:
         # Get spendable transactions and the total amount.
-        spendable_transactions = get_spendable_transactions(node=node, credentials=creds)
-        spendable_amount = get_spendable_amount(spendable_transactions)
+        try:
+            spendable_transactions = get_spendable_transactions(node=node, credentials=creds)
+            spendable_amount = get_spendable_amount(spendable_transactions)
 
-        # Check to see if criteria for being able to send a cross chain transaction are met.
-        if greenlight_transaction(spendable_transactions, spendable_amount):
-            transaction_payload = build_transaction_payload(
-                credentials=creds,
-                spendable_transactions=spendable_transactions,
-                spendable_amount=spendable_amount,
-                federation_address=CIRRUS_FEDERATION_ADDRESS,
-                sending_address=SENDING_ADDRESS,
-                mainchain_address=MAINCHAIN_ADDRESS,
-                fee_amount=Money('0.00010000')
-            )
-            # Try to build transaction. If fails after MAX_BUILD_ATTEMPTS, will return False.
-            built_transaction = build_transaction_loop(transaction_payload=transaction_payload)
+            # Check to see if criteria for being able to send a cross chain transaction are met.
+            if greenlight_transaction(spendable_transactions, spendable_amount):
+                transaction_payload = build_transaction_payload(
+                    credentials=creds,
+                    spendable_transactions=spendable_transactions,
+                    spendable_amount=spendable_amount,
+                    federation_address=CIRRUS_FEDERATION_ADDRESS,
+                    sending_address=SENDING_ADDRESS,
+                    mainchain_address=MAINCHAIN_ADDRESS,
+                    fee_amount=Money('0.00010000')
+                )
+                # Try to build transaction. If fails after MAX_BUILD_ATTEMPTS, will return False.
+                built_transaction = build_transaction_loop(transaction_payload=transaction_payload)
 
-            if built_transaction:
-                if args.simulate:
-                    inspect_transaction(node=node, built_transaction_model=built_transaction)
-                else:
-                    send_transaction(node=node, built_transaction_model=built_transaction)
+                if built_transaction:
+                    if args.simulate:
+                        inspect_transaction(node=node, built_transaction_model=built_transaction)
+                    else:
+                        send_transaction(node=node, built_transaction_model=built_transaction)
+        except APIError as e:
+            print(e)
         print_timeinfo_and_wait(hours_to_wait=HOURS_BETWEEN_CONSOLIDATIONS)
